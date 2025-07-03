@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useRef } from "react"
+import { useRef } from "react"
 import { useRouter, useParams, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, BookOpen, Lightbulb, Quote } from "lucide-react"
@@ -9,8 +9,6 @@ import { books } from "@/lib/mock-data"
 import ReadingProgress from "@/components/reading-progress"
 
 export default function SummaryReaderPage() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
   const contentRef = useRef<HTMLElement>(null)
   const router = useRouter()
   const params = useParams()
@@ -19,16 +17,6 @@ export default function SummaryReaderPage() {
   const contentType = searchParams.get("type") || "summary"
 
   const book = books.find((b) => b.id === bookId)
-
-  useEffect(() => {
-    const authStatus = localStorage.getItem("isAuthenticated")
-    if (authStatus !== "true") {
-      router.push("/")
-    } else {
-      setIsAuthenticated(true)
-      setIsLoading(false)
-    }
-  }, [router])
 
   const getContentTypeInfo = () => {
     switch (contentType) {
@@ -296,16 +284,17 @@ export default function SummaryReaderPage() {
     </div>
   )
 
-  if (isLoading) {
+  if (!book) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold mb-4">Book not found</h1>
+            <Button onClick={() => router.push("/dashboard")}>Back to Dashboard</Button>
+          </div>
+        </div>
       </div>
     )
-  }
-
-  if (!isAuthenticated || !book) {
-    return null
   }
 
   const contentInfo = getContentTypeInfo()

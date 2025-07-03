@@ -7,70 +7,20 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import {
-  BookOpen,
-  Clock,
-  Star,
-  ArrowRight,
-  Play,
-  Quote,
-  Lightbulb,
-  TrendingUp,
-  Smartphone,
-  User,
-  LogOut,
-} from "lucide-react"
+import { BookOpen, Clock, Star, ArrowRight, Play, Quote, Lightbulb, TrendingUp, Smartphone } from "lucide-react"
 import ThemeToggle from "@/components/theme-toggle"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 
 export default function LandingPage() {
   const [email, setEmail] = useState("")
   const [isVisible, setIsVisible] = useState(false)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [userEmail, setUserEmail] = useState("")
   const router = useRouter()
 
   useEffect(() => {
     setIsVisible(true)
-
-    // Check authentication status
-    const authStatus = localStorage.getItem("isAuthenticated")
-    const storedEmail = localStorage.getItem("userEmail")
-
-    if (authStatus === "true") {
-      setIsAuthenticated(true)
-      setUserEmail(storedEmail || "user@example.com")
-    }
   }, [])
 
   const handleGetStarted = () => {
-    if (isAuthenticated) {
-      router.push("/dashboard")
-    } else {
-      router.push("/?signin=true")
-    }
-  }
-
-  const handleSignIn = () => {
-    if (isAuthenticated) {
-      router.push("/dashboard")
-    } else {
-      router.push("/?signin=true")
-    }
-  }
-
-  const handleSignOut = () => {
-    localStorage.removeItem("isAuthenticated")
-    localStorage.removeItem("userEmail")
-    setIsAuthenticated(false)
-    setUserEmail("")
+    router.push("/dashboard")
   }
 
   const features = [
@@ -162,42 +112,7 @@ export default function LandingPage() {
 
             <div className="flex items-center space-x-4">
               <ThemeToggle />
-
-              {isAuthenticated ? (
-                <>
-                  <Button onClick={() => router.push("/dashboard")}>Go to Dashboard</Button>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                        <Avatar className="h-8 w-8">
-                          <AvatarFallback>
-                            <User className="h-4 w-4" />
-                          </AvatarFallback>
-                        </Avatar>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-56" align="end" forceMount>
-                      <div className="flex items-center justify-start gap-2 p-2">
-                        <div className="flex flex-col space-y-1 leading-none">
-                          <p className="text-sm font-medium">{userEmail}</p>
-                        </div>
-                      </div>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={handleSignOut}>
-                        <LogOut className="mr-2 h-4 w-4" />
-                        <span>Sign out</span>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </>
-              ) : (
-                <>
-                  <Button variant="ghost" onClick={handleSignIn}>
-                    Sign In
-                  </Button>
-                  <Button onClick={handleGetStarted}>Get Started</Button>
-                </>
-              )}
+              <Button onClick={handleGetStarted}>Get Started</Button>
             </div>
           </div>
         </div>
@@ -225,7 +140,7 @@ export default function LandingPage() {
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
               <Button size="lg" onClick={handleGetStarted} className="text-lg px-8 py-6">
-                {isAuthenticated ? "Go to Dashboard" : "Start Reading Free"}
+                Start Reading Free
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               <Button size="lg" variant="outline" className="text-lg px-8 py-6 bg-transparent">
@@ -363,7 +278,7 @@ export default function LandingPage() {
 
           <div className="text-center mt-12">
             <Button size="lg" onClick={handleGetStarted}>
-              {isAuthenticated ? "Go to Dashboard" : "Explore All Books"}
+              Explore All Books
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </div>
@@ -419,7 +334,7 @@ export default function LandingPage() {
                 className="bg-primary-foreground text-foreground"
               />
               <Button variant="secondary" className="ml-2 whitespace-nowrap" onClick={handleGetStarted}>
-                {isAuthenticated ? "Dashboard" : "Get Started"}
+                Get Started
               </Button>
             </div>
           </div>

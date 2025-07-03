@@ -1,6 +1,5 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import { useRouter, useParams } from "next/navigation"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
@@ -11,34 +10,24 @@ import Navbar from "@/components/navbar"
 import { books } from "@/lib/mock-data"
 
 export default function ReadingSelectionPage() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
   const params = useParams()
   const bookId = params.id as string
 
   const book = books.find((b) => b.id === bookId)
 
-  useEffect(() => {
-    const authStatus = localStorage.getItem("isAuthenticated")
-    if (authStatus !== "true") {
-      router.push("/")
-    } else {
-      setIsAuthenticated(true)
-      setIsLoading(false)
-    }
-  }, [router])
-
-  if (isLoading) {
+  if (!book) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <main className="container mx-auto px-4 py-8">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold mb-4">Book not found</h1>
+            <Button onClick={() => router.push("/dashboard")}>Back to Dashboard</Button>
+          </div>
+        </main>
       </div>
     )
-  }
-
-  if (!isAuthenticated || !book) {
-    return null
   }
 
   const readingOptions = [
