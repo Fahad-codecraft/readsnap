@@ -40,18 +40,6 @@ export async function getBookById(id: string): Promise<Book | null> {
   }
 }
 
-// export async function createBook(bookData: Omit<Book, 'id'>): Promise<Book> {
-//   try {
-//     const book = await prisma.book.create({
-//       data: bookData
-//     })
-//     return book
-//   } catch (error) {
-//     console.error('Error creating book:', error)
-//     throw new Error('Failed to create book')
-//   }
-// }
-
 interface CreateBookInput {
   title: string
   author: string
@@ -135,21 +123,6 @@ export async function getBookContent(bookId: string): Promise<{
   } catch (error) {
     console.error("Error fetching book content:", error);
     return null;
-  }
-}
-
-export async function updateBook(id: string, bookData: Partial<Omit<Book, 'id'>>): Promise<Book> {
-  try {
-    const book = await prisma.book.update({
-      where: {
-        id: id
-      },
-      data: bookData
-    })
-    return book
-  } catch (error) {
-    console.error('Error updating book:', error)
-    throw new Error('Failed to update book')
   }
 }
 

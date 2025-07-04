@@ -43,9 +43,9 @@ export default async function BookDetailsPage({ params }: BookDetailsPageProps) 
           </Button>
         </Link>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
           <div className="space-y-4">
-            <div className="aspect-[3/4] relative rounded-lg overflow-hidden shadow-lg">
+            <div className="aspect-[9/16] relative rounded-lg overflow-hidden shadow-lg">
               <Image src={book.cover || "/placeholder.svg"} alt={book.title} fill className="object-cover" />
             </div>
           </div>
