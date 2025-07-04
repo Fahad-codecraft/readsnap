@@ -22,5 +22,15 @@ model Book {
   tags        String[]
   description String
   readingTime String
+  content     Content? @relation(fields: [contentId], references: [id])
+  contentId   String?
 }
 
+model Content {
+  id        String @id @default(uuid())
+  summary   String
+  takeaways String
+  quotes    String
+  bookId    String
+  Book      Book[]
+}

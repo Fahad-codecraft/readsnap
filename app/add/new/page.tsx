@@ -18,16 +18,8 @@ import Navbar from "@/components/navbar"
 import { useToast } from "@/hooks/use-toast"
 import { Toaster } from "@/components/ui/toaster"
 import ReactMarkdown from "react-markdown"
+import { createBook } from "@/actions/book.actions"
 
-interface Takeaway {
-  id: string
-  content: string
-}
-
-interface Quote {
-  id: string
-  content: string
-}
 
 const availableGenres = [
   "business",
@@ -65,10 +57,10 @@ export default function AddNewBookPage() {
   const [summary, setSummary] = useState("")
 
   // Key takeaways
-  const [takeaways, setTakeaways] = useState<Takeaway[]>([{ id: "1", content: "" }])
+  const [takeaways, setTakeaways] = useState("")
 
   // Quotes
-  const [quotes, setQuotes] = useState<Quote[]>([{ id: "1", content: "" }])
+  const [quotes, setQuotes] = useState("")
 
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -80,27 +72,6 @@ export default function AddNewBookPage() {
 
   const removeGenre = (genre: string) => {
     setSelectedGenres(selectedGenres.filter((g) => g !== genre))
-  }
-
-
-  const removeTakeaway = (id: string) => {
-    if (takeaways.length > 1) {
-      setTakeaways(takeaways.filter((t) => t.id !== id))
-    }
-  }
-
-  const updateTakeaway = (id: string, content: string) => {
-    setTakeaways(takeaways.map((t) => (t.id === id ? { ...t, content } : t)))
-  }
-
-  const removeQuote = (id: string) => {
-    if (quotes.length > 1) {
-      setQuotes(quotes.filter((q) => q.id !== id))
-    }
-  }
-
-  const updateQuote = (id: string, content: string) => {
-    setQuotes(quotes.map((q) => (q.id === id ? { ...q, content } : q)))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -120,10 +91,7 @@ export default function AddNewBookPage() {
 
     // Simulate saving (in a real app, this would be an API call)
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000))
-
       const newBook = {
-        id: Date.now().toString(),
         title,
         author,
         description,
@@ -131,12 +99,11 @@ export default function AddNewBookPage() {
         readingTime: readingTime || "10 min read",
         cover: coverUrl || "/placeholder.svg?height=400&width=300",
         summary,
-        takeaways: takeaways.filter((t) => t.content.trim()),
-        quotes: quotes.filter((q) => q.content.trim()),
+        takeaways,
+        quotes,
       }
 
-      // In a real app, you would save this to your database
-      console.log("New book created:", newBook)
+      await createBook(newBook)
 
       toast({
         title: "Book Added Successfully!",
@@ -341,6 +308,7 @@ The book presents a compelling narrative that challenges conventional thinking..
             </Card>
 
             {/* Key Takeaways */}
+            {/* Key Takeaways */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -349,53 +317,40 @@ The book presents a compelling narrative that challenges conventional thinking..
                 </CardTitle>
                 <CardDescription>Add actionable insights using Markdown formatting</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                {takeaways.map((takeaway, index) => (
-                  <div key={takeaway.id} className="space-y-4 p-4 border rounded-lg">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-semibold">Takeaway #{index + 1}</h4>
-                      {takeaways.length > 1 && (
-                        <Button type="button" variant="ghost" size="sm" onClick={() => removeTakeaway(takeaway.id)}>
-                          <X className="w-4 h-4" />
-                        </Button>
-                      )}
-                    </div>
-
-                    <Tabs defaultValue="write" className="w-full">
-                      <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="write">Write</TabsTrigger>
-                        <TabsTrigger value="preview">Preview</TabsTrigger>
-                      </TabsList>
-                      <TabsContent value="write">
-                        <Textarea
-                          value={takeaway.content}
-                          onChange={(e) => updateTakeaway(takeaway.id, e.target.value)}
-                          placeholder={`Write your takeaway in Markdown format...
+              <CardContent>
+                <Tabs defaultValue="write" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="write">Write</TabsTrigger>
+                    <TabsTrigger value="preview">Preview</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="write">
+                    <Textarea
+                      value={takeaways}
+                      onChange={(e) => setTakeaways(e.target.value)}
+                      placeholder={`Write your key takeaways in Markdown format...
 
 Example:
 ${sampleTakeaway}`}
-                          rows={8}
-                          className="font-mono text-sm"
-                        />
-                      </TabsContent>
-                      <TabsContent value="preview">
-                        <div className="min-h-[200px] p-4 border rounded-md bg-muted/30">
-                          {takeaway.content ? (
-                            <div className="prose prose-sm dark:prose-invert max-w-none">
-                              <ReactMarkdown>{takeaway.content}</ReactMarkdown>
-                            </div>
-                          ) : (
-                            <p className="text-muted-foreground italic">Preview will appear here...</p>
-                          )}
+                      rows={10}
+                      className="font-mono text-sm"
+                    />
+                  </TabsContent>
+                  <TabsContent value="preview">
+                    <div className="min-h-[200px] p-4 border rounded-md bg-muted/30">
+                      {takeaways ? (
+                        <div className="prose prose-sm dark:prose-invert max-w-none">
+                          <ReactMarkdown>{takeaways}</ReactMarkdown>
                         </div>
-                      </TabsContent>
-                    </Tabs>
-                  </div>
-                ))}
+                      ) : (
+                        <p className="text-muted-foreground italic">Preview will appear here...</p>
+                      )}
+                    </div>
+                  </TabsContent>
+                </Tabs>
               </CardContent>
             </Card>
 
-            {/* Quotes */}
+            {/* Quotes & Insights */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -404,52 +359,39 @@ ${sampleTakeaway}`}
                 </CardTitle>
                 <CardDescription>Add memorable quotes with explanations using Markdown</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                {quotes.map((quote, index) => (
-                  <div key={quote.id} className="space-y-4 p-4 border rounded-lg">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-semibold">Quote #{index + 1}</h4>
-                      {quotes.length > 1 && (
-                        <Button type="button" variant="ghost" size="sm" onClick={() => removeQuote(quote.id)}>
-                          <X className="w-4 h-4" />
-                        </Button>
-                      )}
-                    </div>
-
-                    <Tabs defaultValue="write" className="w-full">
-                      <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="write">Write</TabsTrigger>
-                        <TabsTrigger value="preview">Preview</TabsTrigger>
-                      </TabsList>
-                      <TabsContent value="write">
-                        <Textarea
-                          value={quote.content}
-                          onChange={(e) => updateQuote(quote.id, e.target.value)}
-                          placeholder={`Write your quote and explanation in Markdown format...
+              <CardContent>
+                <Tabs defaultValue="write" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="write">Write</TabsTrigger>
+                    <TabsTrigger value="preview">Preview</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="write">
+                    <Textarea
+                      value={quotes}
+                      onChange={(e) => setQuotes(e.target.value)}
+                      placeholder={`Write your quotes and insights in Markdown format...
 
 Example:
 ${sampleQuote}`}
-                          rows={8}
-                          className="font-mono text-sm"
-                        />
-                      </TabsContent>
-                      <TabsContent value="preview">
-                        <div className="min-h-[200px] p-4 border rounded-md bg-muted/30">
-                          {quote.content ? (
-                            <div className="prose prose-sm dark:prose-invert max-w-none">
-                              <ReactMarkdown>{quote.content}</ReactMarkdown>
-                            </div>
-                          ) : (
-                            <p className="text-muted-foreground italic">Preview will appear here...</p>
-                          )}
+                      rows={10}
+                      className="font-mono text-sm"
+                    />
+                  </TabsContent>
+                  <TabsContent value="preview">
+                    <div className="min-h-[200px] p-4 border rounded-md bg-muted/30">
+                      {quotes ? (
+                        <div className="prose prose-sm dark:prose-invert max-w-none">
+                          <ReactMarkdown>{quotes}</ReactMarkdown>
                         </div>
-                      </TabsContent>
-                    </Tabs>
-                  </div>
-                ))}
-
+                      ) : (
+                        <p className="text-muted-foreground italic">Preview will appear here...</p>
+                      )}
+                    </div>
+                  </TabsContent>
+                </Tabs>
               </CardContent>
             </Card>
+
 
             <Separator />
 
