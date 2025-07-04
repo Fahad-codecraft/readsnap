@@ -49,7 +49,7 @@ export default function BookGrid({ searchQuery, selectedGenre }: BookGridProps) 
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
       {books.map((book) => (
         <Card
           key={book.id}
@@ -57,7 +57,7 @@ export default function BookGrid({ searchQuery, selectedGenre }: BookGridProps) 
           onClick={() => handleBookClick(book.id)}
         >
           <CardContent className="p-4">
-            <div className="aspect-[3/4] relative mb-4 rounded-md overflow-hidden">
+            <div className="aspect-[10/16] relative mb-4 rounded-md overflow-hidden">
               <Image
                 src={book.cover || "/placeholder.svg"}
                 alt={book.title}

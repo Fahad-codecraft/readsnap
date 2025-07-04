@@ -15,7 +15,7 @@ export default function DashboardPage() {
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">Discover Book Summaries</h1>
-          <p className="text-muted-foreground">Read comprehensive summaries of bestselling books in minutes</p>
+          <p className="text-muted-foreground">Read comprehensive summaries of books in minutes</p>
         </div>
 
         <SearchAndFilter

@@ -69,21 +69,15 @@ export default async function BookDetailsPage({ params }: BookDetailsPageProps) 
               <p className="text-muted-foreground leading-relaxed">{book.description}</p>
             </div>
 
-            <div className="space-y-2">
-              <p className="text-sm text-muted-foreground">
-                <span className="font-medium">Genres:</span>{" "}
-                {book.genres.map((g) => g.charAt(0).toUpperCase() + g.slice(1)).join(", ")}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                <span className="font-medium">Reading Time:</span> {book.readingTime}
-              </p>
-            </div>
+            <div className="mt-2">
+
             <Link href={`/read/${book.id}`}>
               <Button size="lg" className="w-full">
                 <BookOpen className="w-4 h-4 mr-2" />
                 Read Summary
               </Button>
             </Link>
+            </div>
           </div>
         </div>
       </main>

@@ -1,7 +1,7 @@
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, BookOpen, Lightbulb, Quote } from "lucide-react"
 import Navbar from "@/components/navbar"
@@ -114,31 +114,10 @@ export default async function ReadingSelectionPage({ params }: ReadingSelectionP
                         <CardTitle className="text-lg">{option.title}</CardTitle>
                         <CardDescription className="text-sm">{option.description}</CardDescription>
                       </CardHeader>
-                      <CardContent className="text-center pt-0">
-                        <div className="text-xs text-muted-foreground bg-muted px-3 py-1 rounded-full inline-block">
-                          {option.estimatedTime}
-                        </div>
-                      </CardContent>
                     </Card>
                   </Link>
                 )
               })}
-            </div>
-          </div>
-
-          {/* Quick Stats */}
-          <div className="grid grid-cols-3 gap-4 text-center">
-            <div className="p-4 bg-card rounded-lg border">
-              <div className="text-2xl font-bold text-primary">12</div>
-              <div className="text-sm text-muted-foreground">Key Concepts</div>
-            </div>
-            <div className="p-4 bg-card rounded-lg border">
-              <div className="text-2xl font-bold text-primary">8</div>
-              <div className="text-sm text-muted-foreground">Actionable Tips</div>
-            </div>
-            <div className="p-4 bg-card rounded-lg border">
-              <div className="text-2xl font-bold text-primary">15</div>
-              <div className="text-sm text-muted-foreground">Memorable Quotes</div>
             </div>
           </div>
         </div>
