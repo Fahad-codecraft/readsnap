@@ -1,12 +1,14 @@
 "use client"
 
-import { useMemo } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Clock } from "lucide-react"
-import { books } from "@/lib/mock-data"
+
+import { getAllBooks } from "@/actions/book.actions"
+import type { Book } from "@/actions/book.actions"
 
 interface BookGridProps {
   searchQuery: string
@@ -15,6 +17,23 @@ interface BookGridProps {
 
 export default function BookGrid({ searchQuery, selectedGenre }: BookGridProps) {
   const router = useRouter()
+  const [books, setBooks] = useState<Book[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function fetchBooks() {
+      try {
+        const fetchedBooks = await getAllBooks()
+        setBooks(fetchedBooks)
+      } catch (error) {
+        console.error("Error loading books:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchBooks()
+  }, [])
 
   const filteredBooks = useMemo(() => {
     return books.filter((book) => {
@@ -22,14 +41,23 @@ export default function BookGrid({ searchQuery, selectedGenre }: BookGridProps) 
         book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         book.author.toLowerCase().includes(searchQuery.toLowerCase())
 
-      const matchesGenre = selectedGenre === "all" || book.genres.includes(selectedGenre)
+      const matchesGenre =
+        selectedGenre === "all" || book.genres.includes(selectedGenre)
 
       return matchesSearch && matchesGenre
     })
-  }, [searchQuery, selectedGenre])
+  }, [books, searchQuery, selectedGenre])
 
   const handleBookClick = (bookId: string) => {
     router.push(`/book/${bookId}`)
+  }
+
+  if (loading) {
+    return (
+      <div className="col-span-full text-center py-12">
+        <p className="text-muted-foreground">Loading books...</p>
+      </div>
+    )
   }
 
   return (
@@ -42,7 +70,12 @@ export default function BookGrid({ searchQuery, selectedGenre }: BookGridProps) 
         >
           <CardContent className="p-4">
             <div className="aspect-[3/4] relative mb-4 rounded-md overflow-hidden">
-              <Image src={book.cover || "/placeholder.svg"} alt={book.title} fill className="object-cover" />
+              <Image
+                src={book.cover || "/placeholder.svg"}
+                alt={book.title}
+                fill
+                className="object-cover"
+              />
             </div>
 
             <div className="space-y-2">
@@ -50,16 +83,11 @@ export default function BookGrid({ searchQuery, selectedGenre }: BookGridProps) 
               <p className="text-sm text-muted-foreground">by {book.author}</p>
 
               <div className="flex flex-wrap gap-1 mb-2">
-                {book.genres.slice(0, 2).map((genre) => (
+                {book.genres.map((genre) => (
                   <Badge key={genre} variant="secondary" className="text-xs capitalize">
                     {genre}
                   </Badge>
                 ))}
-                {book.genres.length > 2 && (
-                  <Badge variant="outline" className="text-xs">
-                    +{book.genres.length - 2}
-                  </Badge>
-                )}
               </div>
 
               <div className="flex items-center text-xs text-muted-foreground">

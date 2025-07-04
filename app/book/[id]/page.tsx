@@ -1,19 +1,20 @@
-"use client"
-
-import { useRouter, useParams } from "next/navigation"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, BookOpen } from "lucide-react"
 import Navbar from "@/components/navbar"
-import { books } from "@/lib/mock-data"
+import Link from "next/link"
+import { getBookById } from "@/actions/book.actions"
 
-export default function BookDetailsPage() {
-  const router = useRouter()
-  const params = useParams()
-  const bookId = params.id as string
+type BookDetailsPageProps = {
+  params: {
+    id: string
+  }
+}
 
-  const book = books.find((b) => b.id === bookId)
+export default async function BookDetailsPage({ params }: BookDetailsPageProps) {
+  const { id } = await params
+  const book = await getBookById(id)
 
   if (!book) {
     return (
@@ -21,8 +22,10 @@ export default function BookDetailsPage() {
         <Navbar />
         <main className="container mx-auto px-4 py-8">
           <div className="text-center">
-            <h1 className="text-2xl font-bold mb-4">Book not found</h1>
-            <Button onClick={() => router.push("/dashboard")}>Back to Dashboard</Button>
+            <h1 className="text-2xl font-bold mb-4">Book not found</h1>\
+            <Link href="/dashboard">
+              <Button>Back to Dashboard</Button>
+            </Link>
           </div>
         </main>
       </div>
@@ -33,10 +36,12 @@ export default function BookDetailsPage() {
     <div className="min-h-screen bg-background">
       <Navbar />
       <main className="container mx-auto px-4 py-8">
-        <Button variant="ghost" onClick={() => router.back()} className="mb-6">
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Books
-        </Button>
+        <Link href={"/dashboard"}>
+          <Button variant="ghost" className="mb-6">
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Books
+          </Button>
+        </Link>
 
         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           <div className="space-y-4">
@@ -73,11 +78,12 @@ export default function BookDetailsPage() {
                 <span className="font-medium">Reading Time:</span> {book.readingTime}
               </p>
             </div>
-
-            <Button size="lg" className="w-full" onClick={() => router.push(`/read/${book.id}`)}>
-              <BookOpen className="w-4 h-4 mr-2" />
-              Read Summary
-            </Button>
+            <Link href={`/read/${book.id}`}>
+              <Button size="lg" className="w-full">
+                <BookOpen className="w-4 h-4 mr-2" />
+                Read Summary
+              </Button>
+            </Link>
           </div>
         </div>
       </main>

@@ -1,20 +1,21 @@
-"use client"
-
-import { useRouter, useParams } from "next/navigation"
+import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, BookOpen, Lightbulb, Quote } from "lucide-react"
 import Navbar from "@/components/navbar"
-import { books } from "@/lib/mock-data"
+import { getBookById } from "@/actions/book.actions"
 
-export default function ReadingSelectionPage() {
-  const router = useRouter()
-  const params = useParams()
-  const bookId = params.id as string
+type ReadingSelectionPageProps = {
+  params: {
+    id: string
+  }
+}
 
-  const book = books.find((b) => b.id === bookId)
+export default async function ReadingSelectionPage({ params }: ReadingSelectionPageProps) {
+  const { id } = await params
+  const book = await getBookById(id)
 
   if (!book) {
     return (
@@ -23,7 +24,9 @@ export default function ReadingSelectionPage() {
         <main className="container mx-auto px-4 py-8">
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-4">Book not found</h1>
-            <Button onClick={() => router.push("/dashboard")}>Back to Dashboard</Button>
+            <Link href="/dashboard">
+              <Button>Back to Dashboard</Button>
+            </Link>
           </div>
         </main>
       </div>
@@ -60,18 +63,16 @@ export default function ReadingSelectionPage() {
     },
   ]
 
-  const handleOptionSelect = (optionId: string) => {
-    router.push(`/summary/${bookId}?type=${optionId}`)
-  }
-
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
       <main className="container mx-auto px-4 py-8">
-        <Button variant="ghost" onClick={() => router.back()} className="mb-6">
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Book Details
-        </Button>
+        <Link href={`/book/${id}`}>
+          <Button variant="ghost" className="mb-6">
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Book Details
+          </Button>
+        </Link>
 
         <div className="max-w-4xl mx-auto">
           {/* Book Header */}
@@ -102,26 +103,24 @@ export default function ReadingSelectionPage() {
               {readingOptions.map((option) => {
                 const IconComponent = option.icon
                 return (
-                  <Card
-                    key={option.id}
-                    className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-105 border-2 hover:border-primary/20"
-                    onClick={() => handleOptionSelect(option.id)}
-                  >
-                    <CardHeader className="text-center pb-4">
-                      <div
-                        className={`w-16 h-16 rounded-full ${option.color} flex items-center justify-center mx-auto mb-4`}
-                      >
-                        <IconComponent className={`w-8 h-8 ${option.iconColor}`} />
-                      </div>
-                      <CardTitle className="text-lg">{option.title}</CardTitle>
-                      <CardDescription className="text-sm">{option.description}</CardDescription>
-                    </CardHeader>
-                    <CardContent className="text-center pt-0">
-                      <div className="text-xs text-muted-foreground bg-muted px-3 py-1 rounded-full inline-block">
-                        {option.estimatedTime}
-                      </div>
-                    </CardContent>
-                  </Card>
+                  <Link key={option.id} href={`/summary/${id}?type=${option.id}`}>
+                    <Card className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-105 border-2 hover:border-primary/20">
+                      <CardHeader className="text-center pb-4">
+                        <div
+                          className={`w-16 h-16 rounded-full ${option.color} flex items-center justify-center mx-auto mb-4`}
+                        >
+                          <IconComponent className={`w-8 h-8 ${option.iconColor}`} />
+                        </div>
+                        <CardTitle className="text-lg">{option.title}</CardTitle>
+                        <CardDescription className="text-sm">{option.description}</CardDescription>
+                      </CardHeader>
+                      <CardContent className="text-center pt-0">
+                        <div className="text-xs text-muted-foreground bg-muted px-3 py-1 rounded-full inline-block">
+                          {option.estimatedTime}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </Link>
                 )
               })}
             </div>

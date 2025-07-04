@@ -1,7 +1,3 @@
-"use client"
-
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -11,17 +7,6 @@ import { BookOpen, Clock, Star, ArrowRight, Play, Quote, Lightbulb, TrendingUp, 
 import ThemeToggle from "@/components/theme-toggle"
 
 export default function LandingPage() {
-  const [email, setEmail] = useState("")
-  const [isVisible, setIsVisible] = useState(false)
-  const router = useRouter()
-
-  useEffect(() => {
-    setIsVisible(true)
-  }, [])
-
-  const handleGetStarted = () => {
-    router.push("/dashboard")
-  }
 
   const features = [
     {
@@ -112,7 +97,9 @@ export default function LandingPage() {
 
             <div className="flex items-center space-x-4">
               <ThemeToggle />
-              <Button onClick={handleGetStarted}>Get Started</Button>
+              <Link href={"/dashboard"}>
+                <Button>Get Started</Button>
+              </Link>
             </div>
           </div>
         </div>
@@ -122,9 +109,7 @@ export default function LandingPage() {
       <section className="py-20 px-4 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 animate-gradient"></div>
         <div className="container mx-auto text-center relative">
-          <div
-            className={`transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
-          >
+          <div>
             <Badge variant="secondary" className="mb-4 animate-pulse-glow">
               🚀 Over 500K+ readers trust ReadSnap
             </Badge>
@@ -139,14 +124,12 @@ export default function LandingPage() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-              <Button size="lg" onClick={handleGetStarted} className="text-lg px-8 py-6">
-                Start Reading Free
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-              <Button size="lg" variant="outline" className="text-lg px-8 py-6 bg-transparent">
-                <Play className="mr-2 h-5 w-5" />
-                Watch Demo
-              </Button>
+              <Link href={"/dashboard"}>
+                <Button size="lg" className="text-lg px-8 py-6">
+                  Start Reading Free
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-3xl mx-auto">
@@ -277,10 +260,12 @@ export default function LandingPage() {
           </div>
 
           <div className="text-center mt-12">
-            <Button size="lg" onClick={handleGetStarted}>
+            <Link href={"/dashboard"}>
+            <Button size="lg">
               Explore All Books
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
+            </Link>
           </div>
         </div>
       </section>
@@ -323,21 +308,6 @@ export default function LandingPage() {
           <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
             Join over 500,000 readers who are learning faster and achieving more with ReadSnap
           </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-            <div className="flex max-w-md mx-auto sm:mx-0">
-              <Input
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="bg-primary-foreground text-foreground"
-              />
-              <Button variant="secondary" className="ml-2 whitespace-nowrap" onClick={handleGetStarted}>
-                Get Started
-              </Button>
-            </div>
-          </div>
 
           <p className="text-sm opacity-75">No credit card required • Free forever plan available</p>
         </div>
