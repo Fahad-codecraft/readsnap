@@ -80,10 +80,7 @@ export default function BookListPage() {
   }
 
   const handleEditBook = (bookId: string) => {
-    toast({
-      title: "Edit Feature",
-      description: "Edit functionality would be implemented here.",
-    })
+    router.push(`/edit/${bookId}`)
   }
 
   return (
@@ -146,7 +143,7 @@ export default function BookListPage() {
               {filteredBooks.map((book) => (
                 <Card key={book.id} className="group hover:shadow-lg transition-all duration-200">
                   <CardContent className="p-4">
-                    <div className="aspect-[3/4] relative mb-4 rounded-md overflow-hidden bg-muted">
+                    <div className="aspect-[10/16] relative mb-4 rounded-md overflow-hidden bg-muted">
                       <Image src={book.cover || "/placeholder.svg"} alt={book.title} fill className="object-cover" />
                       <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         <DropdownMenu>
@@ -206,6 +203,14 @@ export default function BookListPage() {
                         >
                           <BookOpen className="w-3 h-3 mr-1" />
                           View
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="px-2 bg-transparent"
+                          onClick={() => handleEditBook(book.id)}
+                        >
+                          <Edit className="w-3 h-3" />
                         </Button>
                         <Button
                           variant="outline"

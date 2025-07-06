@@ -12,6 +12,19 @@ export interface Book {
   readingTime: string
 }
 
+export interface UpdateBook {
+  id: string;
+  title: string;
+  author: string;
+  description: string;
+  genres: string[];
+  readingTime?: string;
+  cover?: string;
+  summary: string;
+  takeaways: string;
+  quotes: string;
+}
+
 export async function getAllBooks(): Promise<Book[]> {
   try {
     const books = await prisma.book.findMany({
@@ -126,11 +139,70 @@ export async function getBookContent(bookId: string): Promise<{
   }
 }
 
+export async function updateBookAndContent({
+  id,
+  title,
+  author,
+  description,
+  genres,
+  readingTime,
+  cover,
+  summary,
+  takeaways,
+  quotes,
+}: UpdateBook) {
+  try {
+    // Step 1: Fetch existing book to get contentId
+    const existingBook = await prisma.book.findUnique({
+      where: { id },
+      select: { contentId: true },
+    });
+
+    if (!existingBook) {
+      throw new Error("Book not found.");
+    }
+
+    const updatedBook = await prisma.book.update({
+      where: { id },
+      data: {
+        title,
+        author,
+        description,
+        genres,
+        readingTime,
+        cover,
+      },
+    });
+
+    const updatedContent = await prisma.content.update({
+      where: { id: existingBook.contentId ?? undefined },
+      data: {
+        summary,
+        takeaways,
+        quotes,
+      },
+    });
+
+    return {
+      book: updatedBook,
+      content: updatedContent,
+    };
+  } catch (error) {
+    console.error("Error updating book and content:", error);
+    throw new Error("Failed to update book and its content.");
+  }
+}
+
 export async function deleteBook(id: string): Promise<void> {
   try {
     await prisma.book.delete({
       where: {
         id: id
+      }
+    })
+    await prisma.content.deleteMany({
+      where: {
+        bookId: id
       }
     })
   } catch (error) {
